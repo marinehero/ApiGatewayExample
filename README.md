@@ -6,10 +6,13 @@
 
 Structure
 
-ApiGatewayExample/
-     GatewayApi/    serves on port 7000 /catalog-api/* & /orders-api/*
-     CatalogApi/    on port 7001        /api/currencies
-     OrdersApi/     on port 7002        /api/orders
+Directory |      | Port| path
+----------|------|-----|------
+|ApiGatewayExample/
+||GatewayApi/  | 7000    | localhost:7000/catalog-api/currencies
+||             |         | localhost:7000/orders-api/orders
+||CatalogApi/  | 7001    | localhost:7001/api/currencies
+||OrdersApi/   | 7002    | localhost:7002/api/orders
 
 ``` bash
 # install dependencies
