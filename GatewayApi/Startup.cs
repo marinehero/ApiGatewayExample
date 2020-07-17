@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Ocelot.Middleware;
 using Ocelot.DependencyInjection;
+using Microsoft.OpenApi.Models;
 
 namespace GatewayApi
 {
@@ -29,11 +30,18 @@ namespace GatewayApi
         {
             services.AddControllers();
             services.AddOcelot(Configuration);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);;
+            services.AddSwaggerForOcelot(Configuration);
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+            });            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            //app.UsePathBase("/gateway");
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -45,12 +53,19 @@ namespace GatewayApi
 
             app.UseAuthorization();
 
+            app.UseSwagger();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
 
-            //await app.UseOcelot();
+            app.UseSwaggerForOcelotUI(opt => {
+                opt.DownstreamSwaggerEndPointBasePath = "/gateway/swagger/docs";
+                opt.PathToSwaggerGenerator = "/swagger/docs";
+            })
+            .UseOcelot()
+            .Wait();
 
         }
     }
